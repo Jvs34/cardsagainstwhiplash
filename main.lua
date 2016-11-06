@@ -3,7 +3,7 @@ lube = require( "lube" )
 game = require( "game" )
 timer = require( "timer" )
 signal = require( "signal" )
-
+json = require( "json" )
 
 local caw = nil
 

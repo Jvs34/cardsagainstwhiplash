@@ -153,10 +153,15 @@ function GAME:Connect( ip , port , tcp )
 	
 	for i , v in pairs( self.LubeClients ) do
 		v:init()
+		v.callbacks.recv = function( data )
+			self:OnClientReceive( data )
+		end
 		
-		--sethandshake
-		--setping
+		v.handshake = json.encode( { "caw_handshake" } )
+		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		v:connect( ip , port )
+		
+		v:send( "test" )
 	end
 	
 end
@@ -177,10 +182,26 @@ function GAME:StartServer( tcp )
 	
 	for i , v in pairs( self.LubeServers ) do
 		v:init()
-		--sethandshake
-		--setping
+		
+		v.callbacks.recv = function( data , clientid )
+			self:OnServerReceive( data , clientid )
+		end
+		
+		v.callbacks.connect = function( clientid )
+			self:OnClientConnected( clientid )
+		end
+		
+		v.callbacks.disconnect = function( clientid )
+			self:OnClientDisconnected( clientid )
+		end
+		
+		v.handshake = json.encode( { "caw_handshake" } )
+		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		
 		v:listen( 27015 )
+		
+
+		
 	end
 	
 	self:Connect( "loopback" , 0 )
@@ -197,25 +218,34 @@ function GAME:IsClient()
 end
 
 function GAME:NetworkingThink( deltatime )
-	if self:IsServer() then
-		for i , v in pairs( self.LubeServers ) do
-			v:update( deltatime )
-		end
-	end
-	
 	if self:IsClient() then
 		for i , v in pairs( self.LubeClients ) do
 			v:update( deltatime )
 		end
 	end
+	
+	if self:IsServer() then
+		for i , v in pairs( self.LubeServers ) do
+			v:update( deltatime )
+		end
+	end
 end
 
-function GAME:ServerReceive( clientid , data )
-
+function GAME:OnClientConnected( clientid )
+	print( "Client connected ".. clientid )
 end
 
-function GAME:ClientReceive( data )
 
+function GAME:OnClientDisconnected( clientid )
+	print( "Client disconnected ".. clientid )
+end
+
+function GAME:OnServerReceive( data , clientid )
+	--print( data , clientid )
+end
+
+function GAME:OnClientReceive( data )
+	--print( data )
 end
 
 function GAME:RoundThink( deltatime )
