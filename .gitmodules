@@ -7,4 +7,4 @@
 [submodule "misclibs"]
 	path = misclibs
 	url = https://github.com/bartbes/love-misc-libs
-	branch = LUBE-udpplus
+	branch = master
