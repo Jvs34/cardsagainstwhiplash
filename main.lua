@@ -1,8 +1,10 @@
 class = require( "hump/class" )
-lube = require( "lube" )
-game = require( "game" )
 timer = require( "hump/timer" )
 signal = require( "hump/signal" )
+vector = require( "hump/vector" )
+lube = require( "misclibs/LUBE/LUBE" )
+loveframes = require( "loveframes" )
+game = require( "game" )
 json = require( "json" )
 
 local caw = nil
