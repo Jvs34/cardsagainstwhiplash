@@ -157,11 +157,17 @@ function GAME:Connect( ip , port , tcp )
 			self:OnClientReceive( data )
 		end
 		
-		v.handshake = json.encode( { "caw_handshake" } )
+		v.handshake = json.encode( 
+		{ 
+			caw_handshake = self.VERSION
+		} )
 		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		v:connect( ip , port )
 		
-		v:send( "test" )
+		v:send( json.encode( { "test" } ) )
+		v:send( json.encode( { "test" } ) )
+		v:send( json.encode( { "test" } ) )
+		
 	end
 	
 end
@@ -195,7 +201,11 @@ function GAME:StartServer( tcp )
 			self:OnClientDisconnected( clientid )
 		end
 		
-		v.handshake = json.encode( { "caw_handshake" } )
+		v.handshake = json.encode( 
+		{ 
+			caw_handshake = self.VERSION
+		} )
+		
 		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		
 		v:listen( 27015 )
@@ -241,11 +251,11 @@ function GAME:OnClientDisconnected( clientid )
 end
 
 function GAME:OnServerReceive( data , clientid )
-	--print( data , clientid )
+	print( data , clientid )
 end
 
 function GAME:OnClientReceive( data )
-	--print( data )
+	print( data )
 end
 
 function GAME:RoundThink( deltatime )
