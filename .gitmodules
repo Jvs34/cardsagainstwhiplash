@@ -4,3 +4,6 @@
 [submodule "hump"]
 	path = hump
 	url = https://github.com/vrld/hump
+[submodule "love-misc-libs"]
+	path = love-misc-libs
+	url = https://github.com/bartbes/love-misc-libs
