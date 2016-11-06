@@ -1,8 +1,8 @@
-class = require( "class" )
+class = require( "hump/class" )
 lube = require( "lube" )
 game = require( "game" )
-timer = require( "timer" )
-signal = require( "signal" )
+timer = require( "hump/timer" )
+signal = require( "hump/signal" )
 json = require( "json" )
 
 local caw = nil
