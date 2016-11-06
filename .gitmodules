@@ -4,3 +4,7 @@
 [submodule "hump"]
 	path = hump
 	url = https://github.com/vrld/hump
+[submodule "misclibs"]
+	path = misclibs
+	url = https://github.com/bartbes/love-misc-libs
+	branch = LUBE-udpplus
