@@ -53,7 +53,31 @@ function GAME:Init()
 	}
 	
 	self.Clients = {
-		
+		--[[
+		["loopback:0"] = {
+			networkid = "loopback:0"
+			name = "Jvs",
+			score = 0,
+			data = {
+				round1 = {
+					answer1 = "Im fucking gay",
+					answer2 = "HARAMBE",
+				},
+				round2 = {
+					answer1 = "Rook mine",
+					answer2 = "Duck game",
+				},
+				round3 = {
+					answer = "dildomatic"
+				},
+			}
+		},
+		["127.0.0.1:27015"] = {
+			networkid = "127.0.0.1:27015"
+			name = "Test",
+			score = 0,	
+		}
+		]]
 	}
 	
 	--load all the gamestates in memory
@@ -163,11 +187,7 @@ function GAME:Connect( ip , port , tcp )
 		} )
 		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		v:connect( ip , port )
-		
-		v:send( json.encode( { "test" } ) )
-		v:send( json.encode( { "test" } ) )
-		v:send( json.encode( { "test" } ) )
-		
+				
 	end
 	
 end

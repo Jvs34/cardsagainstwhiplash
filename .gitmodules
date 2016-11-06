@@ -1,0 +1,6 @@
+[submodule "loveframes"]
+	path = loveframes
+	url = https://github.com/unek/LoveFrames
+[submodule "hump"]
+	path = hump
+	url = https://github.com/vrld/hump
