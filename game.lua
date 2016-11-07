@@ -37,7 +37,7 @@ local GAME = {
 
 function GAME:Init()
 	gamestate.registerEvents()
-	self.Server = true
+	self.Server = false
 	
 	self.LubeClients = {
 		
