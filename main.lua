@@ -2,8 +2,8 @@ class = require( "hump/class" )
 timer = require( "hump/timer" )
 signal = require( "hump/signal" )
 vector = require( "hump/vector" )
-lube = require( "misclibs/LUBE/LUBE" )
-loveframes = require( "loveframes" )
+lube = require( "love-misc-libs/grease/grease" )
+suit = require( "suit" )
 game = require( "game" )
 json = require( "json" )
 
@@ -28,6 +28,28 @@ function love.draw()
 	--gamestate drawing will take care of this
 end
 
+function love.mousepressed( x  , y , button , isTouch )
+end
+
+function love.mousereleased( x , y , button , isTouch )
+
+end
+
+function love.wheelmoved( x , y )
+
+end
+
+function love.keypressed( key , scancode , isrepeat )
+
+end
+
+function love.keyreleased( key )
+
+end
+
+function love.textinput( text )
+
+end
 
 function love.quit()
 	if caw then

@@ -188,6 +188,9 @@ function GAME:Connect( ip , port , tcp )
 		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
 		v:connect( ip , port )
 				
+		for i = 1 , 5 do
+			v:send( "test" .. i )
+		end
 	end
 	
 end
@@ -230,7 +233,7 @@ function GAME:StartServer( tcp )
 		
 		v:listen( 27015 )
 		
-
+		
 		
 	end
 	
@@ -271,11 +274,11 @@ function GAME:OnClientDisconnected( clientid )
 end
 
 function GAME:OnServerReceive( data , clientid )
-	print( data , clientid )
+	print( "Client says: " , data , clientid )
 end
 
 function GAME:OnClientReceive( data )
-	print( data )
+	print( "Server says: " , data )
 end
 
 function GAME:RoundThink( deltatime )

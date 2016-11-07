@@ -7,3 +7,6 @@
 [submodule "love-misc-libs"]
 	path = love-misc-libs
 	url = https://github.com/bartbes/love-misc-libs
+[submodule "suit"]
+	path = suit
+	url = https://github.com/vrld/SUIT
