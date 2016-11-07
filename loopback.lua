@@ -107,8 +107,8 @@ end
 function server:accept()
 end
 
---derive from lube.Client and lube.Server
-loopback.Client = common.class( "loopback.Client" , client , lube.Client )
-loopback.Server = common.class( "loopback.Server" , server , lube.Server )
+--derive from grease.Client and grease.Server
+loopback.Client = common.class( "loopback.Client" , client , grease.Client )
+loopback.Server = common.class( "loopback.Server" , server , grease.Server )
 
 return loopback

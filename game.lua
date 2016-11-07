@@ -8,7 +8,7 @@ local GAME = {
 		"MENU", --menu state
 		"DISCONNECTED", --got disconnected for any reason, game state will say why
 		"LOBBY", --waiting for players
-		"INTRO", --current lobby intro for the game
+		"INTRO", --current lobby intro for the game, hello, "welcome to caw man I have to apologize to the pope etc"
 		"ROUNDINTERMISSION", --say we're starting a certain round and show the rules
 		"WRITEANSWERS", --writing answers phase
 		"SCOREBOARD", --people see their scores
@@ -32,6 +32,16 @@ local GAME = {
 			vote = 0, --0 no vote, otherwise it's the index of the vote
 		}
 	},
+	CONFIG = { --TODO CONFIG FILE
+		MAXPLAYERS = 8, --in total
+		MAXANSWERS = 2, --
+		ROUNDS = 2,
+		SCOREMULTIPLIER = function( score , round ) 
+			return score * round 
+		end,
+		LASTLASH = true,
+		LASTLASHVOTES = 3, --vote allowed from each player
+	}	
 }
 
 
@@ -39,16 +49,46 @@ function GAME:Init()
 	gamestate.registerEvents()
 	self.Server = false
 	
-	self.LubeClients = {
+	--this will contain the grease client channels
+	self.GreaseClients = {
 		
 	}
 	
-	self.LubeServers = {
+	--this will contain the grease server channels
+	self.GreaseServers = {
 		
 	}
 	
-	--each gamestate will have data as an index in this table
-	self.GameState = {
+	--some stuff here needs to be networked to the clients that will be relayed to the corresponding game state
+	--but otherwise, this data here is what the main logic is all about
+	self.GlobalGameState = {
+		currentround = 1,
+		--[[
+			round1 = {
+				question1 = {
+					text = "Who's the best meme 2016?",
+					questionid = 6969, --so you can look it up from database and load sounds and whatever
+					answers = {
+						{
+							text = "harambe",
+							author = "loopback:0",
+							score = 0.7 --percentage of people who voted it
+						},
+						{
+							text = "rook mine",
+							author = "127.0.0.1:27015",
+							score = 0.3 --percentage of people who voted it
+						},
+					}
+				}
+				--and so on
+			}
+		]]
+	}
+	
+	--the questions database
+	self.Database = {
+		
 		
 	}
 	
@@ -79,6 +119,13 @@ function GAME:Init()
 		}
 		]]
 	}
+	
+	--each gamestate will have data as an index in this table
+	self.GameState = {
+		
+	}
+	
+
 	
 	--load all the gamestates in memory
 	for i , v in pairs( self.STATES ) do
@@ -146,14 +193,14 @@ end
 function GAME:Disconnect()
 	
 	if self:IsServer() then
-		for i , v in pairs( self.LubeServers ) do
+		for i , v in pairs( self.GreaseServers ) do
 			v:init()
 		end
 		
 		self.Server = false
 	end
 	
-	for i , v in pairs( self.LubeClients ) do
+	for i , v in pairs( self.GreaseClients ) do
 		v:disconnect()
 		v:init()
 	end
@@ -165,17 +212,17 @@ function GAME:Connect( ip , port , tcp )
 	tcp = true
 	
 	if ip == "loopback" and port == 0 then
-		self.LubeClients[#self.LubeServers + 1] = loopback.Client
+		self.GreaseClients[#self.GreaseServers + 1] = loopback.Client
 	else
 		--how do we tell the client that we're in tcp mode?
 		if tcp then
-			self.LubeClients[#self.LubeClients + 1] = lube.tcpClient
+			self.GreaseClients[#self.GreaseClients + 1] = grease.tcpClient
 		else
-			self.LubeClients[#self.LubeClients + 1] = lube.udpClient
+			self.GreaseClients[#self.GreaseClients + 1] = grease.udpClient
 		end
 	end
 	
-	for i , v in pairs( self.LubeClients ) do
+	for i , v in pairs( self.GreaseClients ) do
 		v:init()
 		v.callbacks.recv = function( data )
 			self:OnClientReceive( data )
@@ -201,15 +248,15 @@ function GAME:StartServer( tcp )
 	tcp = true
 	
 	if tcp then
-		self.LubeServers[#self.LubeServers + 1] = lube.tcpServer
+		self.GreaseServers[#self.GreaseServers + 1] = grease.tcpServer
 	else
-		self.LubeServers[#self.LubeServers + 1] = lube.udpServer
+		self.GreaseServers[#self.GreaseServers + 1] = grease.udpServer
 	end
 	
 	--add the loopback server
-	self.LubeServers[#self.LubeServers + 1] = loopback.Server
+	self.GreaseServers[#self.GreaseServers + 1] = loopback.Server
 	
-	for i , v in pairs( self.LubeServers ) do
+	for i , v in pairs( self.GreaseServers ) do
 		v:init()
 		
 		v.callbacks.recv = function( data , clientid )
@@ -252,13 +299,13 @@ end
 
 function GAME:NetworkingThink( deltatime )
 	if self:IsClient() then
-		for i , v in pairs( self.LubeClients ) do
+		for i , v in pairs( self.GreaseClients ) do
 			v:update( deltatime )
 		end
 	end
 	
 	if self:IsServer() then
-		for i , v in pairs( self.LubeServers ) do
+		for i , v in pairs( self.GreaseServers ) do
 			v:update( deltatime )
 		end
 	end
