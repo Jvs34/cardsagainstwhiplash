@@ -1,5 +1,3 @@
-local gamestate = require( "hump/gamestate" )
-
 local loopback = require( "loopback" )
 
 local GAME = {
