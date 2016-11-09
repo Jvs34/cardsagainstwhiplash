@@ -194,7 +194,7 @@ function GAME:Disconnect()
 		for i , v in pairs( self.GreaseServers ) do
 			v:init()
 		end
-		
+		self.GreaseServers = {}
 		self.Server = false
 	end
 	
@@ -202,6 +202,8 @@ function GAME:Disconnect()
 		v:disconnect()
 		v:init()
 	end
+	
+	self.GreaseClients = {}
 end
 
 function GAME:Connect( ip , port , tcp )
