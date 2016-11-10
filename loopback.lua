@@ -1,5 +1,10 @@
 local loopback = {}
 
+loopback.ip = "loopback"
+loopback.port = 0
+
+loopback.id = loopback.ip..":"..loopback.port
+
 --shamelessly copied from lua pil, look it's 3 am and I don't care enough
 local buffer = {
 	client = {
@@ -62,7 +67,6 @@ end
 
 --puts the data on the loopback buffer
 function client:_send(data)
-	--buffer.client[#buffer.client+1] = data
 	buffer.pushbottom( buffer.client , data )
 	return true
 end
@@ -71,8 +75,7 @@ end
 function client:_receive()
 	local data = buffer.poptop( buffer.server ) --buffer.server[#buffer.server]
 	
-	if data then --#buffer.server > 0 then
-		--buffer.server[#buffer.server] = nil	--remove from buffer
+	if data then
 		return data
 	end
 	
@@ -95,17 +98,14 @@ function server:_listen()
 end
 
 function server:send(data, clientid)
-	--buffer.server[#buffer.server+1] = data
 	buffer.pushbottom( buffer.server , data )
 end
 
 function server:receive()
-	local data = buffer.poptop( buffer.client )--buffer.client[#buffer.client]
+	local data = buffer.poptop( buffer.client )
 	
-	if data then --#buffer.client > 0 then
-		local id = "loopback:0"
-		
-		--buffer.client[#buffer.client] = nil	--remove from buffer
+	if data then
+		local id = loopback.id
 		return data , id
 	end
 	

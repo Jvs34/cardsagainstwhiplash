@@ -211,8 +211,8 @@ function GAME:Connect( ip , port , tcp )
 	--unlike with hosting, we don't have to add a normal client when looping back
 	tcp = true
 	
-	if ip == "loopback" and port == 0 then
-		self.GreaseClients[#self.GreaseServers + 1] = loopback.Client
+	if ip == loopback.ip and port == loopback.port then
+		self.GreaseClients[#self.GreaseClients + 1] = loopback.Client
 	else
 		--how do we tell the client that we're in tcp mode?
 		if tcp then
@@ -284,7 +284,7 @@ function GAME:StartServer( tcp )
 		
 	end
 	
-	self:Connect( "loopback" , 0 )
+	self:Connect( loopback.ip , loopback.port )
 end
 
 --called when having to do main logic
@@ -333,6 +333,57 @@ end
 --client hook
 function GAME:OnClientReceive( data )
 	print( "Server says: " , data )
+end
+
+
+function GAME:SendToClient( data , clientid )
+	--at this point data has already been converted to a json string so we don't have to do much here
+	local chosenchannel = nil
+	
+	if clientid == nil then
+		chosenchannel = nil --broadcast to all the channels, even the loopback
+	else
+		
+		--is this check needed? loopback will always be connected to the channels below, so technically we should leave it like this
+		--[[
+		if clientid == loopback.id then
+			chosenchannel = self.GreaseServers[#self.GreaseServers] --loopback is always last, in case we're a headless server
+		else
+		]]
+		
+		--search the channel for the clientid and send it over if we found it 
+		for i , v in pairs( self.GreaseServers ) do
+			if v.clients[clientid] then
+				chosenchannel = v
+				break
+			end
+		end
+		
+		--end
+		
+	end
+	
+	--could probably do this with an assert
+	if chosenchannel == nil and clientid ~= nil then
+		Error( "Could not find a channel to send "..data .. " to" .. clientid .."!!!!!" )
+	end
+	
+	if chosenchannel == nil then
+		for i , v in pairs( self.GreaseServers ) do
+			v:send( data )
+		end
+	else
+		chosenchannel:send( data , clientid )
+	end
+end
+
+function GAME:SendToServer( data )
+	--while on the server there may be multiple channels, on the client there's only one, loopback or not
+	--but still, just in case
+	--although we need to make 1000000% sure that we close the other channels and we call GAME:Disconnect properly!!!!!!!!!
+	for i , v in pairs( self.GreaseClients ) do
+		v:send( data )
+	end
 end
 
 function GAME:RoundThink( deltatime )
