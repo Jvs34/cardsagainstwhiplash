@@ -46,6 +46,10 @@ local client = {}
 client._implemented = true
 
 function client:createSocket()
+	buffer.client = {
+		first = 0,
+		last = -1,
+	}
 	return true
 end
 
@@ -81,6 +85,10 @@ local server = {}
 server._implemented = true
 
 function server:createSocket()
+	buffer.server = {
+		first = 0,
+		last = -1,
+	}
 end
 
 function server:_listen()

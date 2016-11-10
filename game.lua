@@ -311,19 +311,26 @@ function GAME:NetworkingThink( deltatime )
 	end
 end
 
+--server hook
 function GAME:OnClientConnected( clientid )
 	print( "Client connected ".. clientid )
 end
 
+--server hook
 
 function GAME:OnClientDisconnected( clientid )
 	print( "Client disconnected ".. clientid )
 end
 
+--server hook
+
 function GAME:OnServerReceive( data , clientid )
 	print( "Client says: " , data , clientid )
+	--unserialize the message and check if it's allowed at all
+	
 end
 
+--client hook
 function GAME:OnClientReceive( data )
 	print( "Server says: " , data )
 end
