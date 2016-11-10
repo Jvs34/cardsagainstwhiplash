@@ -17,13 +17,13 @@ local GAME = {
 		"CREDITS", 
 	},
 	CLIENTINPUT = {
+		--
 		LOBBY = {
 			name = "",
 			limit = 56, --this is checked serverside and clamped if needed
 		},
 		WRITEANSWERS = {
-			answer1 = "",
-			answer2 = "",
+			answer = "harambe",
 			limit = 128, --this is checked serverside and clamped if needed
 		},
 		SHOWANSWERS = { --this will be reused for the last lash, and will be called multiple times for clients
@@ -32,19 +32,25 @@ local GAME = {
 	},
 	CONFIG = { --TODO CONFIG FILE
 		MAXPLAYERS = 8, --in total
-		MAXANSWERS = 2, --
-		ROUNDS = 2,
+		MAXANSWERS = 2, --to give during writeanswers phase
+		ROUNDS = 3,	--last lash included
+		SCORE = {
+			WINNER = 100, --winner gets +100
+		},
 		SCOREMULTIPLIER = function( score , round ) 
 			return score * round 
 		end,
-		LASTLASH = true,
-		LASTLASHVOTES = 3, --vote allowed from each player
+		LASTLASH = {
+			ENABLED = true,
+			VOTES = 3,
+		}
 	}	
 }
 
 
 function GAME:Init()
 	gamestate.registerEvents()
+	
 	self.Server = false
 	
 	--this will contain the grease client channels

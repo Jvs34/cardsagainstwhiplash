@@ -1,3 +1,4 @@
+json = require( "json" )
 class = require( "hump/class" )
 timer = require( "hump/timer" )
 signal = require( "hump/signal" )
@@ -6,7 +7,6 @@ gamestate = require( "hump/gamestate" )
 grease = require( "love-misc-libs/grease/grease" )
 suit = require( "suit" )
 game = require( "game" )
-json = require( "json" )
 
 local caw = nil
 

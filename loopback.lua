@@ -73,7 +73,7 @@ end
 
 --retrieve the data from the loopback buffer
 function client:_receive()
-	local data = buffer.poptop( buffer.server ) --buffer.server[#buffer.server]
+	local data = buffer.poptop( buffer.server )
 	
 	if data then
 		return data
@@ -92,6 +92,7 @@ function server:createSocket()
 		first = 0,
 		last = -1,
 	}
+	return true
 end
 
 function server:_listen()
