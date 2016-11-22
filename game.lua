@@ -20,7 +20,7 @@ local GAME = {
 		--
 		LOBBY = {
 			name = "",
-			limit = 56, --this is checked serverside and clamped if needed
+			limit = 12, --this is checked serverside and clamped if needed
 		},
 		WRITEANSWERS = {
 			answer = "harambe",
@@ -31,6 +31,7 @@ local GAME = {
 		}
 	},
 	CONFIG = { --TODO CONFIG FILE
+		CONNECTIONTIMEOUT = 10,
 		MAXPLAYERS = 8, --in total
 		MAXANSWERS = 2, --to give during writeanswers phase
 		ROUNDS = 3,	--last lash included
@@ -143,6 +144,7 @@ function GAME:Init()
 		
 	end
 	
+	self:RegisterSignals()
 	
 	
 	
@@ -238,12 +240,15 @@ function GAME:Connect( ip , port , tcp )
 		{ 
 			caw_handshake = self.VERSION
 		} )
-		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
+		
+		v:setPing( true , self.CONFIG.CONNECTIONTIMEOUT , json.encode( 
+			{ 
+				"caw_ping" 
+			} ) 
+		)
+		
 		v:connect( ip , port )
-				
-		for i = 1 , 5 do
-			v:send( "test" .. i )
-		end
+		
 	end
 	
 end
@@ -282,7 +287,11 @@ function GAME:StartServer( tcp )
 			caw_handshake = self.VERSION
 		} )
 		
-		v:setPing( true , 10 , json.encode( { "caw_ping" } ) )
+		v:setPing( true , self.CONFIG.CONNECTIONTIMEOUT , json.encode( 
+			{ 
+				"caw_ping" 
+			} )
+		)
 		
 		v:listen( 27015 )
 		
@@ -303,6 +312,13 @@ function GAME:IsClient()
 	return love ~= nil
 end
 
+function GAME:IsConnected()
+	if #self.GreaseClients >0 then
+		return true
+	end
+	return false
+end
+
 function GAME:NetworkingThink( deltatime )
 	if self:IsClient() then
 		for i , v in pairs( self.GreaseClients ) do
@@ -319,19 +335,22 @@ end
 
 --server hook
 function GAME:OnClientConnected( clientid )
-	print( "Client connected ".. clientid )
+	local cid = tostring( clientid )
+	print( "Client connected ".. cid )
 end
 
 --server hook
 
 function GAME:OnClientDisconnected( clientid )
-	print( "Client disconnected ".. clientid )
+	local cid = tostring( clientid )
+	print( "Client disconnected ".. cid )
 end
 
 --server hook
 
 function GAME:OnServerReceive( data , clientid )
-	print( "Client says: " , data , clientid )
+	local cid = tostring( clientid )
+	print( "Client says: " , data , cid )
 	--unserialize the message and check if it's allowed at all
 	
 end
@@ -400,8 +419,40 @@ end
 
 function GAME:Remove()
 	--remove all gamestates
+	self:UnRegisterSignals()
 	self:Disconnect()
 end
+
+
+--SIGNALS
+
+function GAME:RegisterSignals()
+	signal.register( "menu_startserver" , function( gamestate )
+		self:StartServer( true )
+	end)
+	
+	signal.register( "menu_joinserver" , function( gamestate , ip , port )
+		self:Connect( ip , port , true )
+	end)
+	
+end
+
+function GAME:UnRegisterSignals()
+	signal.clear( "menu_startserver" )
+	signal.clear( "menu_joinserver" )
+end
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
 
 local function NewGame()
 	local gamenew = setmetatable( {} ,

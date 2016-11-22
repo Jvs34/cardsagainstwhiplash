@@ -15,7 +15,7 @@ function love.load()
 	love.window.setTitle( caw:GetName() )
 	
 	--TESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTINGTESTING
-	caw:StartServer( true )
+	--caw:StartServer( true )
 end
 
 function love.update( deltatime )
