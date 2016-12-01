@@ -362,6 +362,9 @@ end
 
 
 function GAME:SendToClient( data , clientid )
+	--clientid may or may not be a string, it could also be a socket, so try not to do anything special on it and just
+	--pass it along
+	
 	--at this point data has already been converted to a json string so we don't have to do much here
 	local chosenchannel = nil
 	
@@ -390,7 +393,7 @@ function GAME:SendToClient( data , clientid )
 	
 	--could probably do this with an assert
 	if chosenchannel == nil and clientid ~= nil then
-		Error( "Could not find a channel to send "..data .. " to" .. clientid .."!!!!!" )
+		Error( "Could not find a channel to send "..data .. " to" .. tostring( clientid ) .."!!!!!" )
 	end
 	
 	if chosenchannel == nil then
